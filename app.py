@@ -28,19 +28,14 @@ def inject_styles():
     st.markdown(
         """
         <style>
-        .log-chip {
-            border-radius: 8px;
-            padding: 6px 10px;
-            font-size: 13px;
-            font-weight: 700;
-            border: 1px solid #444;
-            background-color: #1a1a1a;
-            font-family: monospace;
-            display: inline-block;
-            white-space: nowrap;
-            margin: 0;
+
+        /* App background */
+        body {
+            background-color: #000000;
+            color: #FFFFFF;
         }
 
+        /* Header row layout */
         .log-header-inline {
             display: flex;
             align-items: center;
@@ -49,41 +44,74 @@ def inject_styles():
             margin-bottom: 10px;
         }
 
+        /* Chip base */
+        .log-chip {
+            border-radius: 8px;
+            padding: 6px 10px;
+            font-size: 13px;
+            font-weight: 700;
+            border: 1px solid #E2E2E2;
+            font-family: monospace;
+            display: inline-block;
+            white-space: nowrap;
+            color: #000000;
+        }
+
+        /* Timestamp */
         .chip-timestamp {
-            background: #1a1a1a;
-            border-color: #444;
-            color: #e6e6e6;
+            background: #E2E2E2;
         }
 
+        /* Module */
         .chip-module {
-            background: #1a1a1a;
-            border-color: #444;
-            color: #e6e6e6;
+            background: #CEE0CA;
         }
 
+        /* INFO */
         .chip-info {
-            background: #0b3d2e;
-            border-color: #0e8f6a;
-            color: #9fffdc;
+            background: #BADBA0;
         }
 
+        /* DEBUG */
         .chip-debug {
-            background: #1f2a44;
-            border-color: #3a5bbf;
-            color: #9fbaff;
+            background: #72CBD6;
         }
 
+        /* WARNING */
         .chip-warning {
-            background: #4d3b00;
-            border-color: #c59d00;
-            color: #ffe28a;
+            background: rgb(220,255,155);
         }
 
+        /* ERROR */
         .chip-error {
-            background: #4a0d0d;
-            border-color: #c53030;
-            color: #ffb3b3;
+            background: #F69875;
         }
+
+        /* Message box */
+        .stContainer > div[data-testid="stVerticalBlock"] > div {
+            border-radius: 10px;
+        }
+
+        .message-box {
+            border: 1px solid #E2E2E2;
+            border-radius: 10px;
+            background-color: #CEE0CA;
+            padding: 12px 14px;
+            margin-top: 10px;
+        }
+
+        .message-box pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+            font-family: monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #000000;
+            background: transparent;
+        }
+
         </style>
         """,
         unsafe_allow_html=True,
