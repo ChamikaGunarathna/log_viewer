@@ -1,10 +1,11 @@
+import html
 from pathlib import Path
 
 import streamlit as st
 
 from services.storage import save_uploaded_file, list_uploaded_files
 from services.parser import parse_log_file
-from utils.helpers import safe_key, escape_html
+from utils.helpers import safe_key
 
 
 st.set_page_config(
@@ -27,21 +28,6 @@ def inject_styles():
     st.markdown(
         """
         <style>
-        .log-card {
-            border: 1px solid #3a3a3a;
-            border-radius: 12px;
-            padding: 14px;
-            margin-bottom: 18px;
-            background-color: #111111;
-        }
-
-        .log-header-row {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 12px;
-        }
-
         .log-chip {
             border-radius: 8px;
             padding: 6px 10px;
@@ -51,6 +37,16 @@ def inject_styles():
             background-color: #1a1a1a;
             font-family: monospace;
             display: inline-block;
+            white-space: nowrap;
+            margin: 0;
+        }
+
+        .log-header-inline {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
         }
 
         .chip-timestamp {
@@ -87,12 +83,6 @@ def inject_styles():
             background: #4a0d0d;
             border-color: #c53030;
             color: #ffb3b3;
-        }
-
-        .log-message-wrapper {
-            border: 1px solid #4a4a4a;
-            border-radius: 10px;
-            overflow: hidden;
         }
         </style>
         """,
@@ -179,32 +169,28 @@ def render_log_entries(entries):
         st.info("No log entries to display.")
         return
 
-    for i, entry in enumerate(entries):
-        timestamp = entry.get("timestamp", "")
-        level = entry.get("level", "")
-        module = entry.get("module", "")
-        message = entry.get("message", "")
+    for entry in entries:
+        timestamp = str(entry.get("timestamp", ""))
+        level = str(entry.get("level", ""))
+        module = str(entry.get("module", ""))
+        message = str(entry.get("message", ""))
 
         level_class = get_level_class(level)
 
-        st.markdown('<div class="log-card">', unsafe_allow_html=True)
+        with st.container(border=True):
+            st.markdown(
+                f"""
+                <div class="log-header-inline">
+                    <span class="log-chip chip-timestamp">{html.escape(timestamp)}</span>
+                    <span class="log-chip {level_class}">{html.escape(level)}</span>
+                    <span class="log-chip chip-module">{html.escape(module)}</span>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
 
-        st.markdown(
-            f"""
-            <div class="log-header-row">
-                <div class="log-chip chip-timestamp">{timestamp}</div>
-                <div class="log-chip {level_class}">{level}</div>
-                <div class="log-chip chip-module">{module}</div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-        st.markdown('<div class="log-message-wrapper">', unsafe_allow_html=True)
-        st.code(message, language=None)
-        st.markdown('</div>', unsafe_allow_html=True)
-
-        st.markdown('</div>', unsafe_allow_html=True)
+            with st.container(border=True):
+                st.text(message)
 
 
 def main():
