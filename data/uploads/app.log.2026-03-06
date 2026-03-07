@@ -1,0 +1,924 @@
+INFO     | 2026-03-06 22:27:33,163 |               system |      config_workflow | Using CONFIG-DRIVEN workflow
+INFO     | 2026-03-06 22:27:33,163 |               system |      config_workflow | Loading config from: /home/chamika/behaviol/lens/workflow_configs/dataplay_workflow.yaml
+INFO     | 2026-03-06 22:27:33,168 |               system |        graph_builder | Loaded workflow config: dataplay_workflow v1.0.0
+INFO     | 2026-03-06 22:27:33,169 |               system |        graph_builder | Workflow type: CHAT
+INFO     | 2026-03-06 22:27:33,169 |               system |        graph_builder | Building graph from config: dataplay_workflow
+DEBUG    | 2026-03-06 22:27:33,169 |               system |        graph_builder | 
+Added node: indentify_intent -> IntentIdentifier.identify_intent
+DEBUG    | 2026-03-06 22:27:33,169 |               system |        graph_builder | 
+Added node: map_semantic_terms -> SemanticTermMapper.map_semantic_terms
+DEBUG    | 2026-03-06 22:27:33,170 |               system |        graph_builder | 
+Added node: identify_path -> PathFinder.find_path
+DEBUG    | 2026-03-06 22:27:33,170 |               system |        graph_builder | 
+Added node: build_pipeline -> MongoQueryBuilder.build_query
+DEBUG    | 2026-03-06 22:27:33,170 |               system |        graph_builder | 
+Added node: inject_params -> MongoQueryParamInjector.inject_params
+DEBUG    | 2026-03-06 22:27:33,170 |               system |        graph_builder | 
+Added node: run_aggregation -> MongoQueryExecutor.execute_query
+DEBUG    | 2026-03-06 22:27:33,170 |               system |        graph_builder | 
+Added node: merge_data -> Merger.merge
+DEBUG    | 2026-03-06 22:27:33,170 |               system |        graph_builder | 
+Added node: generate_visualizations -> Visualizer.visualize
+DEBUG    | 2026-03-06 22:27:33,171 |               system |        graph_builder | 
+Set entry point: START -> indentify_intent
+DEBUG    | 2026-03-06 22:27:33,171 |               system |        graph_builder | 
+Added edge: map_semantic_terms -> identify_path
+DEBUG    | 2026-03-06 22:27:33,171 |               system |        graph_builder | 
+Added edge: build_pipeline -> inject_params
+DEBUG    | 2026-03-06 22:27:33,171 |               system |        graph_builder | 
+Added edge: inject_params -> run_aggregation
+DEBUG    | 2026-03-06 22:27:33,171 |               system |        graph_builder | 
+Added edge: run_aggregation -> merge_data
+DEBUG    | 2026-03-06 22:27:33,171 |               system |        graph_builder | 
+Added edge: merge_data -> generate_visualizations
+DEBUG    | 2026-03-06 22:27:33,171 |               system |        graph_builder | 
+Added edge: generate_visualizations -> END
+DEBUG    | 2026-03-06 22:27:33,171 |               system |        graph_builder | 
+Added conditional edge: indentify_intent (eq on 'user_intent') -> {'match': 'map_semantic_terms', 'not_match': 'generate_visualizations'}
+DEBUG    | 2026-03-06 22:27:33,171 |               system |        graph_builder | 
+Added conditional edge: identify_path (eq on 'qb_strategy') -> {'match': 'build_pipeline', 'not_match': 'inject_params'}
+INFO     | 2026-03-06 22:27:33,182 |               system |        graph_builder | Compiled graph with 8 nodes
+INFO     | 2026-03-06 22:27:33,182 |               system |        graph_builder | Config-driven workflow compiled: dataplay_workflow v1.0.0
+DEBUG    | 2026-03-06 22:27:33,185 |               system |      config_workflow | 
+Workflow mermaid:
+---
+config:
+  flowchart:
+    curve: linear
+---
+graph TD;
+	__start__([<p>__start__</p>]):::first
+	indentify_intent(indentify_intent)
+	map_semantic_terms(map_semantic_terms)
+	identify_path(identify_path)
+	build_pipeline(build_pipeline)
+	inject_params(inject_params)
+	run_aggregation(run_aggregation)
+	merge_data(merge_data)
+	generate_visualizations(generate_visualizations)
+	__end__([<p>__end__</p>]):::last
+	__start__ --> indentify_intent;
+	build_pipeline --> inject_params;
+	identify_path -. &nbsp;match&nbsp; .-> build_pipeline;
+	identify_path -. &nbsp;not_match&nbsp; .-> inject_params;
+	indentify_intent -. &nbsp;not_match&nbsp; .-> generate_visualizations;
+	indentify_intent -. &nbsp;match&nbsp; .-> map_semantic_terms;
+	inject_params --> run_aggregation;
+	map_semantic_terms --> identify_path;
+	merge_data --> generate_visualizations;
+	run_aggregation --> merge_data;
+	generate_visualizations --> __end__;
+	classDef default fill:#f2f0ff,line-height:1.2
+	classDef first fill-opacity:0
+	classDef last fill:#bfb6fc
+
+INFO     | 2026-03-06 22:28:04,956 |               system |    insight_generator | InsightGeneratorAgent initialized
+INFO     | 2026-03-06 22:28:04,956 |               system |      insight_service | InsightService initialized
+DEBUG    | 2026-03-06 22:28:04,956 |               system |      insight_service | 
+Loaded DOMAIN_CONTEXT: Telecommunications customer analytics (billing + usage). Important terms: mobileNumber (MSISDN), department/cost center, monthCode, callType (IDD/IR/LOCAL), communicationType (VOICE/SMS/DATA), billedValue, roaming, invoices, packs.
+WARNING  | 2026-03-06 22:28:04,956 |               system |      context_service | [ContextService] platform_db.conversations_summary is missing (summary persistence disabled).
+INFO     | 2026-03-06 22:28:04,956 |               system |                  jwt | Token extracted from query parameter (length: 291)
+INFO     | 2026-03-06 22:28:04,957 |               system |                  jwt | payload decoded: {'firstName': 'Dev User', 'lastName': 'Dev User', 'tokenId': '69aaf970348ea67bf730bba3', 'email': 'dev@behaviol.com', 'sub': 'dev@behaviol.com', 'iat': 1772812656, 'exp': 1772855856}
+INFO     | 2026-03-06 22:28:04,957 |     dev@behaviol.com |              ws.chat | Authenticated for user: dev@behaviol.com
+INFO     | 2026-03-06 22:28:04,971 |               system |    insight_generator | InsightGeneratorAgent initialized
+INFO     | 2026-03-06 22:28:04,971 |               system |      insight_service | InsightService initialized
+DEBUG    | 2026-03-06 22:28:04,971 |               system |      insight_service | 
+Loaded DOMAIN_CONTEXT: Telecommunications customer analytics (billing + usage). Important terms: mobileNumber (MSISDN), department/cost center, monthCode, callType (IDD/IR/LOCAL), communicationType (VOICE/SMS/DATA), billedValue, roaming, invoices, packs.
+WARNING  | 2026-03-06 22:28:04,971 |               system |      context_service | [ContextService] platform_db.conversations_summary is missing (summary persistence disabled).
+INFO     | 2026-03-06 22:28:04,971 |               system |                  jwt | Token extracted from query parameter (length: 291)
+INFO     | 2026-03-06 22:28:04,972 |               system |                  jwt | payload decoded: {'firstName': 'Dev User', 'lastName': 'Dev User', 'tokenId': '69aaf970348ea67bf730bba3', 'email': 'dev@behaviol.com', 'sub': 'dev@behaviol.com', 'iat': 1772812656, 'exp': 1772855856}
+INFO     | 2026-03-06 22:28:04,972 |     dev@behaviol.com |              ws.chat | Authenticated for user: dev@behaviol.com
+INFO     | 2026-03-06 22:28:04,981 |     dev@behaviol.com |              ws.chat | WebSocket disconnected
+INFO     | 2026-03-06 22:28:04,982 |     dev@behaviol.com |              ws.chat | [WS] Cleaned up connection for dev@behaviol.com
+INFO     | 2026-03-06 22:28:05,292 |               system |                  jwt | Token extracted from Authorization header
+INFO     | 2026-03-06 22:28:05,293 |               system |                  jwt | payload decoded: {'firstName': 'Dev User', 'lastName': 'Dev User', 'tokenId': '69aaf970348ea67bf730bba3', 'email': 'dev@behaviol.com', 'sub': 'dev@behaviol.com', 'iat': 1772812656, 'exp': 1772855856}
+INFO     | 2026-03-06 22:28:05,293 |     dev@behaviol.com |    api.conversations | Authorized for user: dev@behaviol.com
+INFO     | 2026-03-06 22:28:05,333 |     dev@behaviol.com |    api.conversations | Getting conversations successfull.
+INFO     | 2026-03-06 22:28:05,353 |               system |                  jwt | Token extracted from Authorization header
+INFO     | 2026-03-06 22:28:05,353 |               system |                  jwt | payload decoded: {'firstName': 'Dev User', 'lastName': 'Dev User', 'tokenId': '69aaf970348ea67bf730bba3', 'email': 'dev@behaviol.com', 'sub': 'dev@behaviol.com', 'iat': 1772812656, 'exp': 1772855856}
+INFO     | 2026-03-06 22:28:05,353 |     dev@behaviol.com |    api.conversations | Authorized for user: dev@behaviol.com
+INFO     | 2026-03-06 22:28:05,361 |     dev@behaviol.com |    api.conversations | Getting conversations successfull.
+INFO     | 2026-03-06 22:28:05,450 |               system |                  jwt | Token extracted from Authorization header
+INFO     | 2026-03-06 22:28:05,450 |               system |                  jwt | payload decoded: {'firstName': 'Dev User', 'lastName': 'Dev User', 'tokenId': '69aaf970348ea67bf730bba3', 'email': 'dev@behaviol.com', 'sub': 'dev@behaviol.com', 'iat': 1772812656, 'exp': 1772855856}
+INFO     | 2026-03-06 22:28:05,450 |     dev@behaviol.com |    api.conversations | Authorized dev@behaviol.com
+INFO     | 2026-03-06 22:28:05,455 |     dev@behaviol.com |    api.conversations | Getting chats by conversation_id successfull.
+INFO     | 2026-03-06 22:28:15,541 |               system |                  jwt | Token extracted from Authorization header
+INFO     | 2026-03-06 22:28:15,541 |               system |                  jwt | payload decoded: {'firstName': 'Dev User', 'lastName': 'Dev User', 'tokenId': '69aaf970348ea67bf730bba3', 'email': 'dev@behaviol.com', 'sub': 'dev@behaviol.com', 'iat': 1772812656, 'exp': 1772855856}
+INFO     | 2026-03-06 22:28:15,541 |     dev@behaviol.com |    api.conversations | Authorized dev@behaviol.com
+INFO     | 2026-03-06 22:28:15,544 |     dev@behaviol.com |    api.conversations | Getting chats by conversation_id successfull.
+INFO     | 2026-03-06 22:28:23,716 |     dev@behaviol.com |              ws.chat | Conversation ID: c975445c-e752-4206-bd1d-b23925a4421b
+INFO     | 2026-03-06 22:28:23,716 |     dev@behaviol.com |              ws.chat | Conversation Title: Show the breakdown of IDD telecom cost in...
+DEBUG    | 2026-03-06 22:28:23,727 |     dev@behaviol.com |      context_service | 
+[ContextService] loaded stored summary | convo=c975445c-e752-4206-bd1d-b23925a4421b | summary_chars=0 | summary_message_count=0
+DEBUG    | 2026-03-06 22:28:23,727 |     dev@behaviol.com |      context_service | 
+[ContextService] load_context done | convo=c975445c-e752-4206-bd1d-b23925a4421b | summary_chars=0
+DEBUG    | 2026-03-06 22:28:23,728 |     dev@behaviol.com |      context_service | 
+{
+  "conversation_id": "c975445c-e752-4206-bd1d-b23925a4421b",
+  "summary": "",
+  "summary_message_count": 0
+}
+DEBUG    | 2026-03-06 22:28:23,728 |     dev@behaviol.com |              ws.chat | 
+Context payload: {'conversation_id': 'c975445c-e752-4206-bd1d-b23925a4421b', 'summary': '', 'summary_message_count': 0}
+INFO     | 2026-03-06 22:28:23,728 |     dev@behaviol.com |              ws.chat | [WS] context loaded -> summary_chars=0 summary_message_count=0
+INFO     | 2026-03-06 22:28:23,730 |     dev@behaviol.com |    insight_generator | IntentIdentifier is running...
+INFO     | 2026-03-06 22:28:23,732 |     dev@behaviol.com |    insight_generator | Intent is identified as 'data_query' with a 0.8333333333333335 confidence.
+DEBUG    | 2026-03-06 22:28:23,732 |     dev@behaviol.com |           printState | 
+
+======================================================================
+STATE DEBUG - INTENTIDENTIFIER
+======================================================================
+User Query: 'Show the breakdown of IDD telecom cost in Last year in a piechart by month'
+User Intent: data_query
+Intent Confidence: 0.8333333333333335
+Error: None
+
+Processing Times (ms):
+  intent_identifier_step2.07
+No query results available.
+======================================================================
+
+DEBUG    | 2026-03-06 22:28:23,733 |     dev@behaviol.com |    insight_generator | 
+User Intent: data_query, Confidence: 0.8333333333333335
+INFO     | 2026-03-06 22:28:25,042 |     dev@behaviol.com |                  xai | Chat request was successfully processed.
+INFO     | 2026-03-06 22:28:25,043 |     dev@behaviol.com | semantic_term_mapper | Semantic terms mapped for the given query
+INFO     | 2026-03-06 22:28:25,043 |     dev@behaviol.com | semantic_term_mapper | Parsing the semantic term mapper result string as json is success
+INFO     | 2026-03-06 22:28:25,044 |     dev@behaviol.com |          path_finder | Checking the best path for answering.
+INFO     | 2026-03-06 22:28:25,837 |     dev@behaviol.com |           qdrant.cli | Collection 'dataplay_chat_history' already exists.
+INFO     | 2026-03-06 22:28:26,138 |     dev@behaviol.com |           qdrant.cli | Created payload index for 'unique_id'
+INFO     | 2026-03-06 22:28:27,558 |     dev@behaviol.com |           qdrant.cli | Several hits found for the given thresholds for the query.
+INFO     | 2026-03-06 22:28:27,558 |     dev@behaviol.com |           qdrant.cli | Scores of the hits : [0.8073987, 0.8060572, 0.8073987, 0.8060572]
+INFO     | 2026-03-06 22:28:27,558 |     dev@behaviol.com |           qdrant.cli | Scores of the top_hits : [0.8073987]
+INFO     | 2026-03-06 22:28:27,558 |     dev@behaviol.com |          path_finder | Checking for similar queries.
+INFO     | 2026-03-06 22:28:27,558 |     dev@behaviol.com |          path_finder | Low similarity hit found.
+INFO     | 2026-03-06 22:28:28,920 |     dev@behaviol.com |                  xai | Chat request was successfully processed.
+INFO     | 2026-03-06 22:28:28,920 |     dev@behaviol.com |          path_finder | No similar queries found by LLM assistance. Selecting GENERATE path.
+INFO     | 2026-03-06 22:28:28,922 |     dev@behaviol.com |        query_builder | Building the data pipelines starting.
+INFO     | 2026-03-06 22:28:28,922 |     dev@behaviol.com |        query_builder | Check with data dictionary initiated.
+INFO     | 2026-03-06 22:28:30,087 |     dev@behaviol.com |                  xai | Chat request was successfully processed.
+INFO     | 2026-03-06 22:28:30,088 |     dev@behaviol.com |        query_builder | Check in with data dictionary is completed.
+INFO     | 2026-03-06 22:28:30,088 |     dev@behaviol.com |        query_builder | Parsing the result string as json is success.
+DEBUG    | 2026-03-06 22:28:30,088 |     dev@behaviol.com |        query_builder | 
+Required schemas identified : {'collections': ['billing_usage_monthly'], 'reasoning': 'billing_usage_monthly holds detailed monthly billed telecom usage and charge records per mobile number, including call category which covers IDD costs, necessary for breaking down costs by month for the last year.'}
+INFO     | 2026-03-06 22:28:30,088 |     dev@behaviol.com |        query_builder | Getting entity declarations started.
+INFO     | 2026-03-06 22:28:30,353 |     dev@behaviol.com |            mongo.cli | Retriving scehma for billing_usage_monthly from database succeeded.
+DEBUG    | 2026-03-06 22:28:30,354 |     dev@behaviol.com |        query_builder | 
+Retrieved schema details : 
+[
+  {
+    "entity": "billing_usage_monthly",
+    "fields": [
+      {
+        "name": "month",
+        "type": "string",
+        "errorMessage": "Month is required in YYYY-MM format"
+      },
+      {
+        "name": "monthCode",
+        "type": "number",
+        "errorMessage": "Month Code is required (YYYYMM)"
+      },
+      {
+        "name": "mobileNumber",
+        "type": "string",
+        "errorMessage": "Mobile Number is required"
+      },
+      {
+        "name": "department",
+        "type": "string",
+        "errorMessage": "Department is required"
+      },
+      {
+        "name": "country",
+        "type": "string",
+        "errorMessage": "Country must be between 1 and 200 characters"
+      },
+      {
+        "name": "callType",
+        "type": "string",
+        "errorMessage": "Call Type is required (IDD | IR | LOCAL)"
+      },
+      {
+        "name": "communicationType",
+        "type": "string",
+        "errorMessage": "Communication Type is required (VOICE | SMS | DATA)"
+      },
+      {
+        "name": "callTypeDetailed",
+        "type": "string",
+        "errorMessage": "Call Type Detailed must be between 1 and 500 characters"
+      },
+      {
+        "name": "actualCallSeconds",
+        "type": "long",
+        "errorMessage": "Must be a valid number in seconds"
+      },
+      {
+        "name": "chargedCallSeconds",
+        "type": "long",
+        "errorMessage": "Must be a valid number in seconds"
+      },
+      {
+        "name": "numberOfCalls",
+        "type": "number",
+        "errorMessage": "Must be a valid whole number"
+      },
+      {
+        "name": "billedValue",
+        "type": "object",
+        "errorMessage": "Billed Value is required"
+      },
+      {
+        "name": "totalDataUsageMB",
+        "type": "object",
+        "errorMessage": "Must be a valid decimal number in megabytes"
+      },
+      {
+        "name": "sourceFileId",
+        "type": "object",
+        "errorMessage": "Source File ID is required"
+      },
+      {
+        "name": "id",
+        "type": "string"
+      },
+      {
+        "name": "createdBy",
+        "type": "string"
+      },
+      {
+        "name": "createdDate",
+        "type": "instant"
+      },
+      {
+        "name": "lastModifiedBy",
+        "type": "string"
+      },
+      {
+        "name": "lastModifiedDate",
+        "type": "instant"
+      },
+      {
+        "name": "inactive",
+        "type": "boolean"
+      },
+      {
+        "name": "inactiveDate",
+        "type": "instant"
+      },
+      {
+        "name": "inactiveBy",
+        "type": "string"
+      }
+    ]
+  }
+]
+INFO     | 2026-03-06 22:28:30,354 |     dev@behaviol.com |        query_builder | Getting schema details from entity_declarations is a success.
+INFO     | 2026-03-06 22:28:30,354 |     dev@behaviol.com |        query_builder | Generating pipelines for data aggregation is started.
+INFO     | 2026-03-06 22:28:33,323 |     dev@behaviol.com |                  xai | Chat request was successfully processed.
+INFO     | 2026-03-06 22:28:33,323 |     dev@behaviol.com |        query_builder | Pipeline code is generated for aggregation
+DEBUG    | 2026-03-06 22:28:33,323 |     dev@behaviol.com |        query_builder | 
+Initial Pipelines: [{'collection': 'billing_usage_monthly', 'pipeline': [{'$match': {'callType': 'IDD', 'monthCode': {'$gte': 202503, '$lte': 202602}}}, {'$group': {'_id': '$monthCode', 'totalCost': {'$sum': {'$ifNull': ['$billedValue', 0]}}}}, {'$sort': {'_id': 1}}, {'$project': {'_id': 0, 'month': {'$concat': [{'$substrBytes': [{'$toString': '$_id'}, 0, 4]}, '-', {'$substrBytes': [{'$toString': '$_id'}, 4, 2]}]}, 'totalCost': 1}}]}]
+INFO     | 2026-03-06 22:28:33,323 |     dev@behaviol.com |        query_builder | Parsing the result string as json is success
+INFO     | 2026-03-06 22:28:33,323 |     dev@behaviol.com |        query_builder | Generating python script to generalize the pipeline. Attempt : 1
+INFO     | 2026-03-06 22:28:37,111 |     dev@behaviol.com |                  xai | Chat request was successfully processed.
+INFO     | 2026-03-06 22:28:37,112 |     dev@behaviol.com |        query_builder | Initial python script generated to get pipelines.
+DEBUG    | 2026-03-06 22:28:37,112 |     dev@behaviol.com |        query_builder | 
+Initial python script generated: 
+def get_pipelines(start_month: int = 202503, end_month: int = 202602):
+    pipelines = f"""
+        [
+        {{
+            "collection": "billing_usage_monthly",
+            "pipeline": [
+            {{
+                "$match": {{
+                "callType": "IDD",
+                "monthCode": {{
+                    "$gte": {start_month},
+                    "$lte": {end_month}
+                }}
+                }}
+            }},
+            {{
+                "$group": {{
+                "_id": "$monthCode",
+                "totalCost": {{
+                    "$sum": {{
+                    "$ifNull": [
+                        "$billedValue",
+                        0
+                    ]
+                    }}
+                }}
+                }}
+            }},
+            {{
+                "$sort": {{
+                "_id": 1
+                }}
+            }},
+            {{
+                "$project": {{
+                "_id": 0,
+                "month": {{
+                    "$concat": [
+                    {{
+                        "$substrBytes": [
+                        {{
+                            "$toString": "$_id"
+                        }},
+                        0,
+                        4
+                        ]
+                    }},
+                    "-",
+                    {{
+                        "$substrBytes": [
+                        {{
+                            "$toString": "$_id"
+                        }},
+                        4,
+                        2
+                        ]
+                    }}
+                    ]
+                }},
+                "totalCost": 1
+                }}
+            }}
+            ]
+        }}
+        ]
+        """
+    return pipelines
+INFO     | 2026-03-06 22:28:40,593 |     dev@behaviol.com |                  xai | Chat request was successfully processed.
+INFO     | 2026-03-06 22:28:40,593 |     dev@behaviol.com |        query_builder | Python scripted evaluated.
+DEBUG    | 2026-03-06 22:28:40,593 |     dev@behaviol.com |        query_builder | 
+Evaluation resulted with a confidence of 0.85. Feedback: The function generates a MongoDB aggregation pipeline that is mostly relevant to the user query for IDD telecom cost breakdown by month. It correctly uses the 'billing_usage_monthly' collection and filters for 'IDD' callType with a date range. The $group stage appropriately aggregates costs by monthCode, and $sort ensures chronological order. The $project stage formats the month output, aligning with the pie chart visualization intent. However, the hardcoded start_month (202503) and end_month (202602) do not align with 'last year' from the user query, requiring dynamic adjustment based on the current date. Additionally, while the pipeline is syntactically valid and efficiently structured without unnecessary stages, it lacks error handling for missing 'billedValue' beyond $ifNull (e.g., data type checks). Performance could be slightly improved by ensuring indexes on 'callType' and 'monthCode'. Overall, the function returns a properly formatted string of pipelines, but parameter logic needs improvement for temporal relevance.
+DEBUG    | 2026-03-06 22:28:40,593 |     dev@behaviol.com |        query_builder | 
+Finalized script:
+def get_pipelines(start_month: int = 202503, end_month: int = 202602):
+    pipelines = f"""
+        [
+        {{
+            "collection": "billing_usage_monthly",
+            "pipeline": [
+            {{
+                "$match": {{
+                "callType": "IDD",
+                "monthCode": {{
+                    "$gte": {start_month},
+                    "$lte": {end_month}
+                }}
+                }}
+            }},
+            {{
+                "$group": {{
+                "_id": "$monthCode",
+                "totalCost": {{
+                    "$sum": {{
+                    "$ifNull": [
+                        "$billedValue",
+                        0
+                    ]
+                    }}
+                }}
+                }}
+            }},
+            {{
+                "$sort": {{
+                "_id": 1
+                }}
+            }},
+            {{
+                "$project": {{
+                "_id": 0,
+                "month": {{
+                    "$concat": [
+                    {{
+                        "$substrBytes": [
+                        {{
+                            "$toString": "$_id"
+                        }},
+                        0,
+                        4
+                        ]
+                    }},
+                    "-",
+                    {{
+                        "$substrBytes": [
+                        {{
+                            "$toString": "$_id"
+                        }},
+                        4,
+                        2
+                        ]
+                    }}
+                    ]
+                }},
+                "totalCost": 1
+                }}
+            }}
+            ]
+        }}
+        ]
+        """
+    return pipelines
+INFO     | 2026-03-06 22:28:40,593 |     dev@behaviol.com |        query_builder | Pipeline python script generation finalized.
+INFO     | 2026-03-06 22:28:40,593 |     dev@behaviol.com |        query_builder | Building the data pipelines and generating the python script ended successfully.
+INFO     | 2026-03-06 22:28:40,594 |     dev@behaviol.com | query_param_injector | Running the aggregation started.
+INFO     | 2026-03-06 22:28:40,594 |     dev@behaviol.com | query_param_injector | Injecting parameters intelligently via LLM
+INFO     | 2026-03-06 22:28:40,594 |     dev@behaviol.com | query_param_injector | Function args detected: ('start_month', 'end_month')
+INFO     | 2026-03-06 22:28:41,301 |     dev@behaviol.com |                  xai | Chat request was successfully processed.
+INFO     | 2026-03-06 22:28:41,301 |     dev@behaviol.com | query_param_injector | Parameters extracted successfully.
+DEBUG    | 2026-03-06 22:28:41,302 |     dev@behaviol.com | query_param_injector | 
+Final parameter values for get_queries(): {'start_month': 202501, 'end_month': 202512}
+DEBUG    | 2026-03-06 22:28:41,302 |     dev@behaviol.com | query_param_injector | 
+Pipelines string to be parsed to Json:
+
+        [
+        {
+            "collection": "billing_usage_monthly",
+            "pipeline": [
+            {
+                "$match": {
+                "callType": "IDD",
+                "monthCode": {
+                    "$gte": 202501,
+                    "$lte": 202512
+                }
+                }
+            },
+            {
+                "$group": {
+                "_id": "$monthCode",
+                "totalCost": {
+                    "$sum": {
+                    "$ifNull": [
+                        "$billedValue",
+                        0
+                    ]
+                    }
+                }
+                }
+            },
+            {
+                "$sort": {
+                "_id": 1
+                }
+            },
+            {
+                "$project": {
+                "_id": 0,
+                "month": {
+                    "$concat": [
+                    {
+                        "$substrBytes": [
+                        {
+                            "$toString": "$_id"
+                        },
+                        0,
+                        4
+                        ]
+                    },
+                    "-",
+                    {
+                        "$substrBytes": [
+                        {
+                            "$toString": "$_id"
+                        },
+                        4,
+                        2
+                        ]
+                    }
+                    ]
+                },
+                "totalCost": 1
+                }
+            }
+            ]
+        }
+        ]
+        
+DEBUG    | 2026-03-06 22:28:41,302 |     dev@behaviol.com | query_param_injector | 
+Cleaned pipelines string to be parsed to Json:
+
+        [
+        {
+            "collection": "billing_usage_monthly",
+            "pipeline": [
+            {
+                "$match": {
+                "callType": "IDD",
+                "monthCode": {
+                    "$gte": 202501,
+                    "$lte": 202512
+                }
+                }
+            },
+            {
+                "$group": {
+                "_id": "$monthCode",
+                "totalCost": {
+                    "$sum": {
+                    "$ifNull": [
+                        "$billedValue",
+                        0
+                    ]
+                    }
+                }
+                }
+            },
+            {
+                "$sort": {
+                "_id": 1
+                }
+            },
+            {
+                "$project": {
+                "_id": 0,
+                "month": {
+                    "$concat": [
+                    {
+                        "$substrBytes": [
+                        {
+                            "$toString": "$_id"
+                        },
+                        0,
+                        4
+                        ]
+                    },
+                    "-",
+                    {
+                        "$substrBytes": [
+                        {
+                            "$toString": "$_id"
+                        },
+                        4,
+                        2
+                        ]
+                    }
+                    ]
+                },
+                "totalCost": 1
+                }
+            }
+            ]
+        }
+        ]
+        
+INFO     | 2026-03-06 22:28:41,302 |     dev@behaviol.com | query_param_injector | Pipelines generated successfully.
+DEBUG    | 2026-03-06 22:28:41,302 |     dev@behaviol.com | query_param_injector | 
+Sucessfully Parsed pipelines : 
+[
+  {
+    "collection": "billing_usage_monthly",
+    "pipeline": [
+      {
+        "$match": {
+          "callType": "IDD",
+          "monthCode": {
+            "$gte": 202501,
+            "$lte": 202512
+          }
+        }
+      },
+      {
+        "$group": {
+          "_id": "$monthCode",
+          "totalCost": {
+            "$sum": {
+              "$ifNull": [
+                "$billedValue",
+                0
+              ]
+            }
+          }
+        }
+      },
+      {
+        "$sort": {
+          "_id": 1
+        }
+      },
+      {
+        "$project": {
+          "_id": 0,
+          "month": {
+            "$concat": [
+              {
+                "$substrBytes": [
+                  {
+                    "$toString": "$_id"
+                  },
+                  0,
+                  4
+                ]
+              },
+              "-",
+              {
+                "$substrBytes": [
+                  {
+                    "$toString": "$_id"
+                  },
+                  4,
+                  2
+                ]
+              }
+            ]
+          },
+          "totalCost": 1
+        }
+      }
+    ]
+  }
+]
+INFO     | 2026-03-06 22:28:41,303 |     dev@behaviol.com |        query_builder | Running the aggregation started.
+DEBUG    | 2026-03-06 22:28:41,303 |     dev@behaviol.com |        query_builder | 
+Final pipelines executed to get data : 
+[{'collection': 'billing_usage_monthly', 'pipeline': [{'$match': {'callType': 'IDD', 'monthCode': {'$gte': 202501, '$lte': 202512}}}, {'$group': {'_id': '$monthCode', 'totalCost': {'$sum': {'$ifNull': ['$billedValue', 0]}}}}, {'$sort': {'_id': 1}}, {'$project': {'_id': 0, 'month': {'$concat': [{'$substrBytes': [{'$toString': '$_id'}, 0, 4]}, '-', {'$substrBytes': [{'$toString': '$_id'}, 4, 2]}]}, 'totalCost': 1}}]}]
+INFO     | 2026-03-06 22:28:41,628 |     dev@behaviol.com |        query_builder | Running pipeline has been successful.
+INFO     | 2026-03-06 22:28:41,629 |     dev@behaviol.com |               merger | Merger got request
+INFO     | 2026-03-06 22:28:41,629 |     dev@behaviol.com |               merger | Merger preparing dataset
+INFO     | 2026-03-06 22:28:41,643 |     dev@behaviol.com |               merger | DataFrame df1 shape: (11, 2), columns: ['totalCost', 'month']
+DEBUG    | 2026-03-06 22:28:41,665 |     dev@behaviol.com |               merger | 
+
+********************************
+DEBUG    | 2026-03-06 22:28:41,665 |     dev@behaviol.com |               merger | 
+DFs: {'df1': (11, 2)}
+DEBUG    | 2026-03-06 22:28:41,665 |     dev@behaviol.com |               merger | 
+Masked: {'df1': (11, 2)}
+DEBUG    | 2026-03-06 22:28:41,665 |     dev@behaviol.com |               merger | 
+Masked Summaries count: 1
+DEBUG    | 2026-03-06 22:28:41,665 |     dev@behaviol.com |               merger | 
+Real Prompt Stats count: 1
+DEBUG    | 2026-03-06 22:28:41,665 |     dev@behaviol.com |               merger | 
+Masked Summaries: [{'shape': [11, 2], 'sample_row_count': 3, 'columns': {'totalCost': {'dtype': 'float64', 'semantic_type': 'numeric', 'non_null_count': 11, 'null_count': 0, 'unique_count': 4, 'example_values': ['0.0', '0.0', '0.0'], 'minimum_value': 0.0, 'maximum_value': 2.46, 'average_value': 0.520909090909091, 'standard_deviation': 0.9837322252061742, 'lower_extreme_5_percent': 0.0, 'lower_quartile_25_percent': 0.0, 'median_50_percent': 0.0, 'upper_quartile_75_percent': 0.42, 'upper_extreme_95_percent': 2.4450000000000003, 'zero_value_count': 8, 'negative_value_count': 0, 'outlier_count_iqr': 2}, 'month': {'dtype': 'object', 'semantic_type': 'categorical', 'non_null_count': 11, 'null_count': 0, 'unique_count': 11, 'example_values': ['2025-02', '2025-03', '2025-04'], 'top_values': ['2025-02', '2025-03', '2025-04', '2025-05', '2025-06'], 'top_counts': [1, 1, 1, 1, 1], 'top_shares': [0.09090909090909091, 0.09090909090909091, 0.09090909090909091, 0.09090909090909091, 0.09090909090909091]}}}]
+DEBUG    | 2026-03-06 22:28:41,665 |     dev@behaviol.com |               merger | 
+Real Prompt Stats: [{'shape': [11, 2], 'columns': {'totalCost': {'dtype': 'object', 'semantic_type': 'numeric', 'non_null_count': 11, 'null_count': 0, 'unique_count': 4, 'minimum_value': 0.0, 'maximum_value': 2.46, 'average_value': 0.520909090909091, 'standard_deviation': 0.9837322252061742, 'lower_extreme_5_percent': 0.0, 'lower_quartile_25_percent': 0.0, 'median_50_percent': 0.0, 'upper_quartile_75_percent': 0.42, 'upper_extreme_95_percent': 2.4450000000000003, 'zero_value_count': 8, 'negative_value_count': 0, 'outlier_count_iqr': 2}, 'month': {'dtype': 'object', 'semantic_type': 'categorical', 'non_null_count': 11, 'null_count': 0, 'unique_count': 11}}}]
+DEBUG    | 2026-03-06 22:28:41,665 |     dev@behaviol.com |               merger | 
+
+--- REAL DATAFRAME df1 ---
+DEBUG    | 2026-03-06 22:28:41,667 |     dev@behaviol.com |               merger | 
+totalCost month  
+   0      2025-02
+   0      2025-03
+   0      2025-04
+   0      2025-05
+2.46      2025-06
+   0      2025-07
+   0      2025-08
+0.84      2025-09
+   0      2025-10
+2.43      2025-11
+DEBUG    | 2026-03-06 22:28:41,667 |     dev@behaviol.com |               merger | 
+
+--- MASKED DATAFRAME df1 ---
+DEBUG    | 2026-03-06 22:28:41,667 |     dev@behaviol.com |               merger | 
+ totalCost month  
+0.00       2025-02
+0.00       2025-03
+0.00       2025-04
+0.00       2025-05
+2.46       2025-06
+0.00       2025-07
+0.00       2025-08
+0.84       2025-09
+0.00       2025-10
+2.43       2025-11
+DEBUG    | 2026-03-06 22:28:41,668 |     dev@behaviol.com |               merger | 
+********************************
+
+DEBUG    | 2026-03-06 22:28:41,668 |     dev@behaviol.com |               merger | 
+Real Stats JSON: [
+  {
+    "shape": [
+      11,
+      2
+    ],
+    "columns": {
+      "totalCost": {
+        "dtype": "object",
+        "semantic_type": "numeric",
+        "non_null_count": 11,
+        "null_count": 0,
+        "unique_count": 4,
+        "minimum_value": 0.0,
+        "maximum_value": 2.46,
+        "average_value": 0.520909090909091,
+        "standard_deviation": 0.9837322252061742,
+        "lower_extreme_5_percent": 0.0,
+        "lower_quartile_25_percent": 0.0,
+        "median_50_percent": 0.0,
+        "upper_quartile_75_percent": 0.42,
+        "upper_extreme_95_percent": 2.4450000000000003,
+        "zero_value_count": 8,
+        "negative_value_count": 0,
+        "outlier_count_iqr": 2
+      },
+      "month": {
+        "dtype": "object",
+        "semantic_type": "categorical",
+        "non_null_count": 11,
+        "null_count": 0,
+        "unique_count": 11
+      }
+    }
+  }
+]
+INFO     | 2026-03-06 22:28:50,630 |     dev@behaviol.com |                  xai | Chat request was successfully processed.
+DEBUG    | 2026-03-06 22:28:50,630 |     dev@behaviol.com |               merger | 
+DF Meta : 
+{'meta': {'visualization_type': None, 'title': 'IDD Telecom Cost Breakdown', 'subtitle': 'Last Year by Month', 'layout': 'auto', 'theme': '#f8f8f8', 'max_width': 1200, 'currency': 'AUD', 'unit_defaults': {}}, 'datasets': {'df1': {'viz_type': 'chart', 'chart_type': 'pie', 'title': 'IDD Telecom Cost by Month', 'caption': 'Breakdown of costs for last year', 'x_column': 'month', 'x_label': 'Month', 'y_column': 'totalCost', 'y_label': 'Total Cost (AUD)', 'unit': 'AUD'}}}
+INFO     | 2026-03-06 22:28:50,630 |     dev@behaviol.com |               merger | Merger completed and DF Meta created.
+INFO     | 2026-03-06 22:28:50,630 |     dev@behaviol.com |               merger | Merger time: 9000.68 ms
+INFO     | 2026-03-06 22:28:50,631 |     dev@behaviol.com |           visualizer | Visualizer got request
+DEBUG    | 2026-03-06 22:28:50,631 |     dev@behaviol.com |           visualizer | 
+qb_strategy: GENERATIVE
+DEBUG    | 2026-03-06 22:28:50,631 |     dev@behaviol.com |           visualizer | 
+viz_python_script_content: not present
+DEBUG    | 2026-03-06 22:28:50,631 |     dev@behaviol.com |           visualizer | 
+Summaries count: 1
+DEBUG    | 2026-03-06 22:28:50,631 |     dev@behaviol.com |           visualizer | 
+Masked samples extracted: 1
+DEBUG    | 2026-03-06 22:28:50,631 |     dev@behaviol.com |           visualizer | 
+First summary for shape check: {'shape': [11, 2], 'sample_row_count': 3, 'columns': {'totalCost': {'dtype': 'float64', 'semantic_type': 'numeric', 'non_null_count': 11, 'null_count': 0, 'unique_count': 4, 'example_values': ['0.0', '0.0', '0.0'], 'minimum_value': 0.0, 'maximum_value': 2.46, 'average_value': 0.520909090909091, 'standard_deviation': 0.9837322252061742, 'lower_extreme_5_percent': 0.0, 'lower_quartile_25_percent': 0.0, 'median_50_percent': 0.0, 'upper_quartile_75_percent': 0.42, 'upper_extreme_95_percent': 2.4450000000000003, 'zero_value_count': 8, 'negative_value_count': 0, 'outlier_count_iqr': 2}, 'month': {'dtype': 'object', 'semantic_type': 'categorical', 'non_null_count': 11, 'null_count': 0, 'unique_count': 11, 'example_values': ['2025-02', '2025-03', '2025-04'], 'top_values': ['2025-02', '2025-03', '2025-04', '2025-05', '2025-06'], 'top_counts': [1, 1, 1, 1, 1], 'top_shares': [0.09090909090909091, 0.09090909090909091, 0.09090909090909091, 0.09090909090909091, 0.09090909090909091]}}}
+DEBUG    | 2026-03-06 22:28:50,632 |     dev@behaviol.com |           visualizer | 
+Consulting LLM for visualization strategy
+INFO     | 2026-03-06 22:28:52,321 |     dev@behaviol.com |                  xai | Chat request was successfully processed.
+INFO     | 2026-03-06 22:28:52,321 |     dev@behaviol.com |           visualizer | LLM recommended visualization_type=chart reason=The data includes numeric values for total cost and categorical data for months, making a chart suitable for visualizing the breakdown of telecom costs over time. A pie chart, as requested by the user, can effectively show the proportional distribution of costs by month.
+INFO     | 2026-03-06 22:28:52,321 |     dev@behaviol.com |           visualizer | Generating visualization type: chart
+DEBUG    | 2026-03-06 22:28:52,322 |     dev@behaviol.com |           visualizer | 
+df_meta keys: ['meta', 'datasets']
+INFO     | 2026-03-06 22:28:59,675 |     dev@behaviol.com |                  xai | Chat request was successfully processed.
+DEBUG    | 2026-03-06 22:28:59,675 |     dev@behaviol.com |           visualizer | 
+Generated script preview: def generate_visualization(df1, df_meta):
+    import plotly.express as px
+    df_key = 'df1'
+    dataset = df_meta['datasets'][df_key]
+    meta = df_meta['meta']
+    chart_type = dataset.get('chart_type', 'table')
+    title = dataset.get('title', 'Chart')
+    subtitle = meta.get('subtitle', '')
+    caption = dataset.get('caption', '')
+    x_col = dataset.get('x_column', '')
+    y_col = dataset.get
+DEBUG    | 2026-03-06 22:28:59,959 |     dev@behaviol.com |           visualizer | 
+HTML output preview: 
+        <div style="max-width: 1200px; width: 100%; margin: 0 auto;">
+            <div>                        <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.3.1.min.js" integrity="sha256-4rD3fugVb/nVJYUv5Ky3v+fYXoouHaBSP20WIJuEiWg=" crossorigin="anonymous"></script>                <div id="
+DEBUG    | 2026-03-06 22:28:59,960 |     dev@behaviol.com |           visualizer | 
+Saving visualization python_script for inspection
+INFO     | 2026-03-06 22:28:59,960 |     dev@behaviol.com |           visualizer | Visualizer completed in 9329.19 ms
+DEBUG    | 2026-03-06 22:28:59,962 |     dev@behaviol.com |              ws.chat | 
+visualization: 
+            <!-- CLAUDE_VISUALIZATION_PLAN: {
+  "visualization_type": "chart",
+  "reason": "The data includes numeric values for total cost and categorical data for months, making a chart suitable for visualizing the breakdown of telecom costs over time. A pie chart, as requested by the user, can effectively show the proportional distribution of costs by month.",
+  "chart_type": "pie",
+  "components": [
+    "chart"
+  ],
+  "recommendations": [
+    "Add filters for easier analysis",
+    "Highlight top entities or trends",
+    "Aggregate values by category"
+  ]
+} -->
+            <!-- USER_QUERY: Show the breakdown of IDD telecom cost in Last year in a piechart by month -->
+            <!-- GENERATED_AT: 2026-03-06 22:28:59 -->
+            <!-- CLAUDE_MODEL: claude-3-opus-20240229 -->
+
+            
+        <div style="max-width: 1200px; width: 100%; margin: 0 auto;">
+            <div>                        <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.3.1.min.js" integrity="sha256-4rD3fugVb/nVJYUv5Ky3v+fYXoouHaBSP20WIJuEiWg=" crossorigin="anonymous"></script>                <div id="ffff51a5-a4a2-4625-9af7-f7f182e245af" class="plotly-graph-div" style="height:420px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("ffff51a5-a4a2-4625-9af7-f7f182e245af")) {                    Plotly.newPlot(                        "ffff51a5-a4a2-4625-9af7-f7f182e245af",                        [{"domain":{"x":[0.0,1.0],"y":[0.0,1.0]},"hovertemplate":"month=%{label}\u003cbr\u003etotalCost=%{value}\u003cextra\u003e\u003c\u002fextra\u003e","labels":["2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12"],"legendgroup":"","name":"","showlegend":true,"values":{"dtype":"f8","bdata":"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACuR+F6FK4DQAAAAAAAAAAAAAAAAAAAAADhehSuR+HqPwAAAAAAAAAAcT0K16NwA0AAAAAAAAAAAA=="},"type":"pie","textinfo":"percent+label"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"legend":{"tracegroupgap":0},"title":{"text":"IDD Telecom Cost by Month","x":0.5,"xanchor":"center"},"height":420,"paper_bgcolor":"#f8f8f8","plot_bgcolor":"#f8f8f8","showlegend":true},                        {"displayModeBar": false, "responsive": true}                    )                };            </script>        </div>
+        </div>
+        
+
+            <!-- END_OF_VISUALIZATION -->
+            
+INFO     | 2026-03-06 22:28:59,962 |     dev@behaviol.com |              ws.chat | Extracted visualization type: chart, is_text: False
+INFO     | 2026-03-06 22:28:59,962 |     dev@behaviol.com |              ws.chat | Building insight HTML... for chat id: 202
+INFO     | 2026-03-06 22:28:59,962 |     dev@behaviol.com |    insight_generator | [InsightGenerator] Calling LLM...
+DEBUG    | 2026-03-06 22:28:59,962 |     dev@behaviol.com |    insight_generator | 
+[InsightGenerator] SYSTEM PROMPT:
+You are a senior executive-level business analyst generating premium dashboard insights.
+
+You are given ONE input:
+A visualization HTML snippet generated by the system.
+
+Your task:
+Generate a high-quality executive insight card to be displayed BELOW the visualization.
+
+The insight must be:
+- Clear to non-technical business users
+- Structured and easy to scan
+- Professional and confident
+- Visually expressive but not decorative
+- Concise and impactful
+
+CONTENT RULES (CRITICAL) >>>
+
+- Use ONLY information clearly visible in the visualization HTML.
+- Do NOT invent numbers, percentages, rankings, or names.
+- If exact values are unclear, describe patterns qualitatively.
+- Avoid technical statistical terms (no IQR, variance, percentile, etc.).
+- Focus on business meaning, exposure, opportunity, and action.
+- Keep tone executive, not academic.
+
+STRUCTURE (MANDATORY) >>>
+
+Return ONE premium insight card with:
+
+1) A strong headline (with one icon)
+2) 3–5 short structured sections
+3) Clear business interpretation
+4) Clear recommended action
+5) Maximum 2 badges
+
+VISUAL FORMAT (MANDATORY) >>>
+
+Wrap everything inside ONE outer div:
+
+style="background-color:#FFFFFF;padding:18px;border-radius:12px;border:1px solid #E2E2E2;"
+
+Formatting rules:
+- Use <p> blocks for clean spacing
+- Use <b> for section titles and key phrases
+- Use <i> sparingly for nuance
+- Use <u> sparingly for emphasis
+- Maximum 1 icon per section
+- Icons must appear only at the beginning of section titles
+- Do NOT overuse icons
+- Maximum 5 sections total
+- Maximum 2 badges total
+
+ICON GUIDELINES >>>
+
+Use tasteful, professional icons to enhance readability:
+Examples: 📊 🔎 ⚠️ 💡 🚀 📈 📉 🛑 🔁 🎯
+
+Icons must:
+- Support meaning (not decoration)
+- Appear at the beginning of section titles only
+- Not appear mid-sentence
+- Be limited and balanced
+
+BADGE COLORS (STRICT – LUTHEN BRAND) >>>
+
+Use ONLY these badges when appropriate:
+
+Insight:
+<span style="background-color:#72CBD6;padding:2px 8px;border-radius:999px;">Insight</span>
+
+Attention:
+<span style="background-color:#F69875;padding:2px 8px;border-radius:999px;">Attention</span>
+
+Strong:
+<span style="background-color:#BADBA0;padding:2px 8px;border-radius:999px;">Strong</span>
+
+Note:
+<span style="background-color:#E2E2E2;padding:2px 8px;border-radius:999px;">Note</span>
+
+Badges must:
+- Appear at end of relevant section
+- Not exceed 2 total
+- Be used only when meaningful (risk, opportunity, strength)
+
+OUTPUT RULES >>>
+
+- Return ONLY one HTML snippet.
+- Output MUST start with <div and end with </div>
+- Allowed tags: <div>, <ul>, <li>, <b>, <span>, <p>, <br>, <i>, <u>
+- NO <script> tags
+- NO inline JS attributes
+- No markdown
+- No JSON
+
+INFO     | 2026-03-06 22:29:03,511 |     dev@behaviol.com |                  xai | Chat request was successfully processed.
+INFO     | 2026-03-06 22:29:03,511 |     dev@behaviol.com |    insight_generator | [InsightGenerator] LLM completed.
+DEBUG    | 2026-03-06 22:29:03,511 |     dev@behaviol.com |    insight_generator | 
+[InsightGenerator] RAW LLM OUTPUT:
+<div style="background-color:#FFFFFF;padding:18px;border-radius:12px;border:1px solid #E2E2E2;">
+    <p><b>📊 IDD Telecom Cost Distribution: Key Monthly Insights</b></p>
+    <p><b>Overview:</b> The pie chart illustrates the breakdown of IDD telecom costs across the months of the last year, highlighting how costs are distributed over time.</p>
+    <p><b>Pattern Observed:</b> Certain months appear to contribute more significantly to the total cost, indicating potential seasonal peaks or specific high-usage periods.</p>
+    <p><b>Business Impact:</b> Uneven cost distribution may reflect inconsistent demand or operational inefficiencies, impacting budget planning and resource allocation.</p>
+    <p><b>Recommended Action:</b> Investigate the drivers behind high-cost months to understand usage spikes. Implement cost control measures or renegotiate telecom contracts for better rates during peak periods. <span style="background-color:#72CBD6;padding:2px 8px;border-radius:999px;">Insight</span></p>
+</div>
+INFO     | 2026-03-06 22:29:03,511 |     dev@behaviol.com |      insight_service | [InsightService] SUCCESS in 3549.57 ms
+INFO     | 2026-03-06 22:29:03,550 |     dev@behaviol.com |   platform-mongo-cli | Saved chat | user=dev@behaviol.com | chat=202 | convo=c975445c-e752-4206-bd1d-b23925a4421b
+DEBUG    | 2026-03-06 22:29:03,550 |     dev@behaviol.com |      context_service | 
+[ContextService] per-message summary start | convo=c975445c-e752-4206-bd1d-b23925a4421b | chat_id=202
+DEBUG    | 2026-03-06 22:29:03,551 |     dev@behaviol.com |      context_service | 
+[ContextService] fetching chat | conversation_id=c975445c-e752-4206-bd1d-b23925a4421b (<class 'str'>) | chat_id=202 (<class 'str'>)
+DEBUG    | 2026-03-06 22:29:03,551 |     dev@behaviol.com |      context_service | 
+[ContextService] summary prompt built | chars=10458
+INFO     | 2026-03-06 22:29:06,703 |     dev@behaviol.com |                  xai | Chat request was successfully processed.
+DEBUG    | 2026-03-06 22:29:06,715 |     dev@behaviol.com |      context_service | 
+[ContextService] Per-message summary stored | convo=c975445c-e752-4206-bd1d-b23925a4421b | chat_id=202 | usage={'final_prompt': 'You summarize conversations concisely.You are maintaining a running conversation summary for a Telstra analytics chat.\nThe summary is used later for context-aware answers.\n\nIMPORTANT:\n- Only use facts from PREVIOUS SUMMARY or NEW MESSAGE.\n- Do NOT invent anything.\n- If NEW MESSAGE conflicts with PREVIOUS SUMMARY, prefer NEW MESSAGE and note the change.\n- Keep the summary short but information-dense.\n\nOUTPUT FORMAT (must follow exactly):\nReturn a single text block with these sections and labels:\nUSER_GOAL:\nDATA_REQUESTS:\nFILTERS_AND_PARAMS:\nRESULTS_FOUND:\nOPEN_ITEMS:\n\nPREVIOUS SUMMARY:\n(none)\n\nNEW MESSAGE:\nUSER: Show the breakdown of IDD telecom cost in Last year in a piechart by month\nASSISTANT: <!-- CLAUDE_VISUALIZATION_PLAN: {\n  "visualization_type": "chart",\n  "reason": "The data includes numeric values for total cost and categorical data for months, making a chart suitable for visualizing the breakdown of telecom costs over time. A pie chart, as requested by the user, can effectively show the proportional distribution of costs by month.",\n  "chart_type": "pie",\n  "components": [\n    "chart"\n  ],\n  "recommendations": [\n    "Add filters for easier analysis",\n    "Highlight top entities or trends",\n    "Aggregate values by category"\n  ]\n} -->\n            <!-- USER_QUERY: Show the breakdown of IDD telecom cost in Last year in a piechart by month -->\n            <!-- GENERATED_AT: 2026-03-06 22:28:59 -->\n            <!-- CLAUDE_MODEL: claude-3-opus-20240229 -->\n\n            \n        <div style="max-width: 1200px; width: 100%; margin: 0 auto;">\n            <div>                        <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: \'local\'};</script>\n        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.3.1.min.js" integrity="sha256-4rD3fugVb/nVJYUv5Ky3v+fYXoouHaBSP20WIJuEiWg=" crossorigin="anonymous"></script>                <div id="ffff51a5-a4a2-4625-9af7-f7f182e245af" class="plotly-graph-div" style="height:420px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("ffff51a5-a4a2-4625-9af7-f7f182e245af")) {                    Plotly.newPlot(                        "ffff51a5-a4a2-4625-9af7-f7f182e245af",                        [{"domain":{"x":[0.0,1.0],"y":[0.0,1.0]},"hovertemplate":"month=%{label}\\u003cbr\\u003etotalCost=%{value}\\u003cextra\\u003e\\u003c\\u002fextra\\u003e","labels":["2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12"],"legendgroup":"","name":"","showlegend":true,"values":{"dtype":"f8","bdata":"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACuR+F6FK4DQAAAAAAAAAAAAAAAAAAAAADhehSuR+HqPwAAAAAAAAAAcT0K16NwA0AAAAAAAAAAAA=="},"type":"pie","textinfo":"percent+label"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"legend":{"tracegroupgap":0},"title":{"text":"IDD Telecom Cost by Month","x":0.5,"xanchor":"center"},"height":420,"paper_bgcolor":"#f8f8f8","plot_bgcolor":"#f8f8f8","showlegend":true},                        {"displayModeBar": false, "responsive": true}                    )                };            </script>        </div>\n        </div>\n        \n\n            <!-- END_OF_VISUALIZATION -->\n\nWHAT TO CAPTURE (high priority):\n- User goal / intent (what they are trying to achieve)\n- Any month codes, date ranges, mobile numbers, usernames, contract types\n- Any \'top\', \'highest\', \'lowest\', \'count\', \'sum\', \'average\' constraints\n- The final answer produced (key numbers + entities)\n- Any repeated user request (e.g., asked for a table / chart) summarized once\n\nWHAT TO DROP (low priority):\n- Greetings, thanks, small talk\n- Repeated identical requests (merge them)\n- Long explanations\n\nTASK:\n- Update the summary by incorporating NEW MESSAGE.\n- Keep only the essential facts following the output format.\n', 'llm_response': 'USER_GOAL:  \nUnderstand the breakdown of IDD telecom costs for the last year.\n\nDATA_REQUESTS:  \nRequest for a pie chart showing IDD telecom cost by month for the last year.\n\nFILTERS_AND_PARAMS:  \nTime period: Last year (specific months from 2025-02 to 2025-12 as per visualization data).\n\nRESULTS_FOUND:  \nPie chart generated displaying IDD telecom cost distribution by month for the last year (2025-02 to 2025-12).\n\nOPEN_ITEMS:  \nNone.', 'completion_tokens': 108, 'prompt_tokens': 3419, 'total_tokens': 3527, 'time_taken': 3151.894420996541}
+INFO     | 2026-03-06 23:03:30,648 |     dev@behaviol.com |              ws.chat | WebSocket disconnected
+INFO     | 2026-03-06 23:03:30,648 |     dev@behaviol.com |              ws.chat | [WS] Cleaned up connection for dev@behaviol.com

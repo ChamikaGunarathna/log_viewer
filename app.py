@@ -123,7 +123,6 @@ def sidebar_file_uploader():
 
     uploaded_file = st.sidebar.file_uploader(
         "Choose a .log file",
-        type=["log", "txt"],
         accept_multiple_files=False,
     )
 
